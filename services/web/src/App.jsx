@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import { Route, Redirect, Switch, Link } from 'react-router-dom'
 import axios from 'axios'
-
+// const REACT_APP_USERS_SERVICE_URL='http://localhost:3000';
+// const REACT_APP_MOVIES_SERVICE_URL='http://localhost:3001';
 const API_URL = 'http://www.omdbapi.com/?apikey=c5a8df09&s='; // sample
 const USERS_SERVICE_URL = process.env.REACT_APP_USERS_SERVICE_URL;
 const MOVIES_SERVICE_URL = process.env.REACT_APP_MOVIES_SERVICE_URL;
@@ -26,7 +27,7 @@ class App extends Component {
       flashMessages: [],
       isAuthenticated: false
     }
-    this.searchMovie('land before time')
+    this.searchMovie('fantastic beasts')
     this.registerUser = this.registerUser.bind(this)
     this.loginUser = this.loginUser.bind(this)
     this.logoutUser = this.logoutUser.bind(this)
@@ -34,7 +35,16 @@ class App extends Component {
     this.createFlashMessage = this.createFlashMessage.bind(this)
     this.saveMovie = this.saveMovie.bind(this)
     this.getMovies = this.getMovies.bind(this)
+    this.getUser = this.getUser.bind(this)
   }
+
+
+
+ 
+
+
+
+
   searchMovie(term) {
     axios.get(`${API_URL}${term}`)
     .then((res) => { this.setState({ movies: res.data.Search }); })
@@ -61,7 +71,9 @@ class App extends Component {
     }
   }
   registerUser (userData, callback) {
-    return axios.post(`${USERS_SERVICE_URL}/users/register`, userData)
+   
+    // return axios.post(`${USERS_SERVICE_URL}/users/register`, userData)
+    return axios.post('http://localhost:3000/users/register', userData)
     .then((res) => {
       window.localStorage.setItem('authToken', res.data.token)
       window.localStorage.setItem('user', res.data.user)
@@ -76,7 +88,9 @@ class App extends Component {
     })
   }
   loginUser (userData, callback) {
-    return axios.post(`${USERS_SERVICE_URL}/users/login`, userData)
+  
+   // return axios.post(`${USERS_SERVICE_URL}/users/login`, userData)
+    return axios.post('http://localhost:3000/users/login', userData)
     .then((res) => {
       window.localStorage.setItem('authToken', res.data.token)
       window.localStorage.setItem('user', res.data.user)
@@ -86,7 +100,25 @@ class App extends Component {
       this.getMovies()
     })
     .catch((error) => {
-      callback('Something went wrong')
+      callback('Failed')
+       
+       
+    })
+  }
+  getUser (userData, callback) {
+  
+    return axios.post('http://localhost:3001/movies/user', userData)
+    .then((res) => {
+      window.localStorage.setItem('authToken', res.data.token)
+      window.localStorage.setItem('user', res.data.user)
+      this.setState({ isAuthenticated: true })
+      this.createFlashMessage('You successfully got User details!')
+     
+    })
+    .catch((error) => {
+      callback('Failed1')
+       
+       
     })
   }
   logoutUser (e) {
@@ -99,9 +131,12 @@ class App extends Component {
   getCurrentUser () {
     return window.localStorage.user
   }
+
   saveMovie (movie) {
+    
     const options = {
       url: `${MOVIES_SERVICE_URL}/movies`,
+      // url: 'http://localhost:3001/movies',
       method: 'post',
       data: {
         title: movie
@@ -112,12 +147,19 @@ class App extends Component {
       }
     };
     return axios(options)
-    .then((res) => { this.getMovies() })
+    .then((res) => { 
+      
+      this.createFlashMessage('You successfully saved in! !')
+      this.getMovies() 
+    })
     .catch((error) => { console.log(error); })
   }
+
+
   getMovies() {
     const options = {
       url: `${MOVIES_SERVICE_URL}/movies/user`,
+    //  url: 'http://localhost:3001/movies/user',
       method: 'get',
       headers: {
         'Content-Type': 'application/json',
@@ -126,10 +168,11 @@ class App extends Component {
     };
     return axios(options)
     .then((res) => {
-      this.setState({ saved: res.data.data });
+      this.setState({ saved: res.data.data});
     })
     .catch((err) => { console.log(err); })
   }
+
   render () {
     const {isAuthenticated, flashMessages} = this.state
     return (
@@ -142,9 +185,12 @@ class App extends Component {
           <Route exact path='/' render={() => (
             isAuthenticated
             ? <div className="container text-center">
-                <h1>OMDB Movie Search</h1>
-                <SearchBar searchMovie={this.searchMovie.bind(this)} />
-                <a href="" onClick={this.logoutUser}>Logout</a>&nbsp;&#124;&nbsp;<Link to='/collection'>Collection</Link>
+                <h1>Products</h1>
+               {// <SearchBar searchMovie={this.searchMovie.bind(this)} />
+               }
+               {//  <a href="" onClick={this.getUser}>User</a>
+               }
+                <a href="" onClick={this.logoutUser}>Logout</a>&nbsp;&#124;&nbsp;<Link to='/collection'>Cart</Link>
                 <br/><br/><br/>
                 <MovieList
                   movies={this.state.movies}
@@ -171,8 +217,10 @@ class App extends Component {
               createFlashMessage={this.createFlashMessage}
               loginUser={this.loginUser} />
           )} />
+          
           <Route path='/collection' render={() => (
-            isAuthenticated
+           
+            isAuthenticated         
             ? <SavedMovies
               createFlashMessage={this.createFlashMessage}
               saved={this.state.saved} />

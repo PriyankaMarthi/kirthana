@@ -7,7 +7,7 @@ ENV https_proxy http://10.138.77.10:3128
 RUN mkdir /usr/src/app
 WORKDIR /usr/src
 
-# add `/usr/src/node_modules/.bin` to $PATH
+# add `/usr/src/app/node_modules/.bin` to $PATH
 ENV PATH /usr/src/node_modules/.bin:$PATH
 
 # install and cache app dependencies

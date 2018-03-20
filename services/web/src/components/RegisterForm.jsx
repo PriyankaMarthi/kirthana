@@ -63,7 +63,7 @@ class RegisterForm extends Component {
               </label>
               <div className='col-md-10'>
                 <input
-                  type='text'
+                  type='password'
                   className='form-control'
                   id='password'
                   name='password'
