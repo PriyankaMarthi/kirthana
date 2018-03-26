@@ -12,15 +12,15 @@ class RegisterForm extends Component {
       errors: {},
       username: '',
       password: '',
-      passwords: '',
+      password1: '',
       email: '',
       phone: '',
-      formErrors: {username: '', email: '', phone: '', password: '', passwords: ''},
+      formErrors: {username: '', email: '', phone: '', password: '', password1: ''},
       usernameValid: false,
       emailValid: false,
       phoneValid: false,
       passwordValid: false,
-      passwordsValid: false,
+      password1Valid: false,
       formValid: false
 
     };
@@ -48,7 +48,7 @@ class RegisterForm extends Component {
     let emailValid = this.state.emailValid;
     let phoneValid = this.state.phoneValid;
     let passwordValid = this.state.passwordValid;
-    let passwordsValid = this.state.passwordsValid;
+    let password1Valid = this.state.password1Valid;
     switch(fieldName) {
       case 'username':
         usernameValid = value.match(/^([\w]{3,})$/i) || value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)  ;
@@ -66,9 +66,9 @@ class RegisterForm extends Component {
         passwordValid = value.length >= 3;
         fieldValidationErrors.password = passwordValid ? '': ' is too short';
         break;
-      case 'passwords':
-       passwordsValid = this.state.password === value;
-       fieldValidationErrors.passwords = passwordsValid ? '': ' not matched';
+      case 'password1':
+       password1Valid = this.state.password === value;
+       fieldValidationErrors.passwords = password1Valid ? '': ' not matched';
         break;
       default:
         break;
@@ -78,12 +78,12 @@ class RegisterForm extends Component {
                     emailValid: emailValid,
                     phoneValid: phoneValid,
                     passwordValid: passwordValid,
-                    passwordsValid: passwordsValid
+                    password1Valid: password1Valid
                   }, this.validateForm);
   }
 
   validateForm() {
-    this.setState({formValid: this.state.usernameValid && this.state.emailValid && this.state.phoneValid && this.state.passwordValid && this.state.passwordsValid});
+    this.setState({formValid: this.state.usernameValid && this.state.emailValid && this.state.phoneValid && this.state.passwordValid && this.state.password1Valid});
   }
 
   errorClass(error) {
@@ -114,7 +114,7 @@ class RegisterForm extends Component {
 
 
   render () {
-    const { username, email, phone, password , passwords } = this.state;
+    const { username, email, phone, password , password1 } = this.state;
     return (
     
 
@@ -197,9 +197,9 @@ class RegisterForm extends Component {
                   onChange={this.handleUserInput} />
               </div>
             </div>
-            <div className='form-group ${this.errorClass(this.state.formErrors.passwords)'>
+            <div className='form-group ${this.errorClass(this.state.formErrors.password1)'>
               <label
-                htmlFor='passwords'
+                htmlFor='password1'
                 className='col-md-2 control-label'>
                 Re-enter Password
               </label>
@@ -207,9 +207,9 @@ class RegisterForm extends Component {
                 <input
                   type='password'
                   className='form-control'
-                  id='passwords'
-                  name='passwords'
-                  value={passwords}
+                  id='password1'
+                  name='password1'
+                  value={password1}
                   onChange={this.handleUserInput} />
               </div>
             </div>
